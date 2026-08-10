@@ -2,14 +2,22 @@ actions:
   - name: triggerWorkflowRun
     definition:
       kind: synchronous
-      handler: '{{NHOST_BACKEND_URL}}/v1/functions/actions/triggerWorkflowRun' 
+      handler: '{{NHOST_BACKEND_URL}}/v1/functions/actions/triggerWorkflowRun'
       forward_client_headers: true
-      headers:
-        - name: x-hasura-admin-secret
-          value_from_env: HASURA_GRAPHQL_ADMIN_SECRET
+  - name: triggerWorkflowRunWebhook
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_BACKEND_URL}}/v1/functions/actions/triggerWorkflowRunWebhook'
+      forward_client_headers: false
+  - name: approveStep
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_BACKEND_URL}}/v1/functions/actions/approveStep'
+      forward_client_headers: true
 custom_types:
   enums: []
   input_objects: []
   objects:
     - name: TriggerWorkflowRunOutput
+    - name: ApproveStepResponse
   scalars: []

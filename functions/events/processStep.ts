@@ -155,7 +155,8 @@ export default async function handler(req:Request,res:Response){
           `UPDATE step_runs SET status = 'pending',attempt_count = attempt_count + 1,error = $1,updated_at = NOW() WHERE id = $2`,
           [execErr.message,stepRunId]
         );
-        return res.status(200).json({ message: 'Retrying', attempt: currentStepRun.attempt_count + 1 });
+        // return res.status(200).json({ message: 'Retrying', attempt: currentStepRun.attempt_count + 1 });
+        return res.status(500).json({ error: 'Step failed, triggering Hasura retry' });
       }
       throw execErr;
     }

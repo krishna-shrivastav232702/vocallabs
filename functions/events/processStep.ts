@@ -91,7 +91,21 @@ export default async function handler(req:Request,res:Response){
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(),15000);
           try{
-            
+             const llmRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${secrets.api_key || process.env.DEFAULT_LLM_API_KEY}`,
+              },
+              body: JSON.stringify({
+                model: parsedConfig.model,
+                messages: [{ role: 'user', content: parsedConfig.prompt_template }],
+              }),
+              signal: controller.signal,
+            });
+            if (!llmRes.ok) throw new Error(`LLM API ${llmRes.status}: ${await llmRes.text()}`);
+            const json = await llmRes.json();
+            outputData = { result: json.choices?.[0]?.message?.content ?? '' };
           }finally{
             clearTimeout(timeoutId);
           }

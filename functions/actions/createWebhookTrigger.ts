@@ -2,24 +2,14 @@ import {Pool} from 'pg';
 import crypto from 'crypto'
 import { Request,Response } from 'express';
 
-interface CreateWebhookPayload {
-  input: {
-    workflow_id: string;
-  };
-  session_variables?: {
-    'x-hasura-user-id'?: string;
-    [key: string]: string | undefined;
-  };
-}
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 })
 
 export default async function handler(req:Request,res:Response){
-    const body = req.body as CreateWebhookPayload;
-    const {workflow_id} = body.input;
-    const userId = req.headers['x-hasura-user-id'] || body.session_variables?.['x-hasura-user-id'];
+    const {workflow_id} = req.body.input;
+    const userId = req.headers['x-hasura-user-id'] || req.body.session_variables?.['x-hasura-user-id'];
     const client = await pool.connect();
     try{
         await client.query('BEGIN');

@@ -1,25 +1,14 @@
 import { Pool } from "pg";
 import { Request,Response } from "express";
 
-interface ApproveStepPlayload{
-    input:{
-        step_run_id: string;
-    };
-    session_variables?:{
-        'x-hasura-user-id'?:string;
-    };
-}
-
-
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
 
 
 export default async function handler(req:Request,res:Response){
-    const body = req.body as ApproveStepPlayload;
-    const { step_run_id } = body.input;
-    const userId = body.session_variables?.['x-hasura-user-id'] || req.headers['x-hasura-user-id'];
+    const { step_run_id } = req.body.input;
+    const userId = req.body.session_variables?.['x-hasura-user-id'] || req.headers['x-hasura-user-id'];
     if(!userId){
         return res.status(401).json({
             message:"Unauthorized"

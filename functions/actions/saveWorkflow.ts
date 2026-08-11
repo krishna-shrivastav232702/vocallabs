@@ -1,14 +1,15 @@
 import type { Request, Response } from 'express';
 import { Pool } from 'pg';
 
-// Nhost auto-injects NHOST_ADMIN_SECRET, NHOST_SUBDOMAIN, NHOST_REGION into every function.
-// The postgres user password equals the Hasura admin secret in Nhost.
-// SSL is required for external connections to Nhost's PostgreSQL.
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is not set in this function\'s environment');
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL ||
-    `postgres://postgres:${process.env.NHOST_ADMIN_SECRET}@${process.env.NHOST_SUBDOMAIN}.db.${process.env.NHOST_REGION}.nhost.run:5432/postgres`,
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
 });
+console.log('DATABASE_URL present:', !!process.env.DATABASE_URL);
 const EDITOR_RESTRICTED_STEP_TYPES = ['db_write', 'notify'];
 
 export default async function handler(req: Request, res: Response) {

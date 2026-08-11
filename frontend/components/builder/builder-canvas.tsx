@@ -47,7 +47,7 @@ function getDefaultConfig(type: StepType): Record<string, unknown> {
     case 'notify':
       return { message: '' };
     case 'conditional_branch':
-      return { condition: { field: '', operator: 'eq', value: '' }, true_target_position: 0, false_target_position: 0 };
+      return { condition: { field: '', operator: 'eq', value: '' }, on_true_position: 0, on_false_position: 0 };
     case 'approval_gate':
       return { approver_note: '' };
   }
@@ -70,10 +70,25 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
   // Local draft state — optimistic, mutated before any network round-trip
   const [name, setName] = useState<string>(() => existingWorkflow?.name ?? 'Untitled workflow');
   const [steps, setSteps] = useState<DraftStep[]>(() =>
-    (existingWorkflow?.steps ?? []).map((s: typeof existingWorkflow.steps[0]) => ({
-      ...s,
-      _key: s.id ?? generateKey(),
-    }))
+    (existingWorkflow?.steps ?? []).map((s: typeof existingWorkflow.steps[0]) => {
+      // Migrate old config keys if present
+      let migratedConfig = s.config;
+      if (s.step_type === 'conditional_branch' && migratedConfig) {
+        const c = migratedConfig as Record<string, unknown>;
+        if (c.true_target_position !== undefined || c.false_target_position !== undefined || c.on_true_position === undefined) {
+          migratedConfig = { 
+            ...c, 
+            on_true_position: c.true_target_position ?? c.on_true_position ?? 0, 
+            on_false_position: c.false_target_position ?? c.on_false_position ?? 0 
+          };
+        }
+      }
+      return {
+        ...s,
+        config: migratedConfig,
+        _key: s.id ?? generateKey(),
+      };
+    })
   );
   const [triggers, setTriggers] = useState<Partial<WorkflowTrigger>[]>(() =>
     existingWorkflow?.workflow_triggers ?? []
@@ -91,10 +106,24 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
     initialized.current = true;
     setName(existingWorkflow.name);
     setSteps(
-      (existingWorkflow.steps ?? []).map((s: typeof existingWorkflow.steps[0]) => ({
-        ...s,
-        _key: s.id ?? generateKey(),
-      }))
+      (existingWorkflow.steps ?? []).map((s: typeof existingWorkflow.steps[0]) => {
+        let migratedConfig = s.config;
+        if (s.step_type === 'conditional_branch' && migratedConfig) {
+          const c = migratedConfig as Record<string, unknown>;
+          if (c.true_target_position !== undefined || c.false_target_position !== undefined || c.on_true_position === undefined) {
+            migratedConfig = { 
+              ...c, 
+              on_true_position: c.true_target_position ?? c.on_true_position ?? 0, 
+              on_false_position: c.false_target_position ?? c.on_false_position ?? 0 
+            };
+          }
+        }
+        return {
+          ...s,
+          config: migratedConfig,
+          _key: s.id ?? generateKey(),
+        };
+      })
     );
     setTriggers(existingWorkflow.workflow_triggers ?? []);
   }
@@ -314,7 +343,7 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
               items={steps.map((s) => s._key)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="flex flex-col gap-2 max-w-2xl mx-auto">
+              <div className="flex flex-col gap-2 max-w-2xl mx-auto pb-64">
                 {steps.length === 0 && (
                   <div
                     className="text-center py-16 rounded-xl border-2 border-dashed"

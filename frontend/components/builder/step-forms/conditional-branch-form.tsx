@@ -48,7 +48,7 @@ export function ConditionalBranchForm({ config, onChange, readOnly, totalSteps, 
     onChange({ ...config, condition: { ...condition, [field]: value } });
   }
 
-  function updateTarget(key: 'true_target_position' | 'false_target_position', pos: number) {
+  function updateTarget(key: 'on_true_position' | 'on_false_position', pos: number) {
     onChange({ ...config, [key]: pos });
   }
 
@@ -122,8 +122,8 @@ export function ConditionalBranchForm({ config, onChange, readOnly, totalSteps, 
             ✓ If true → go to step
           </p>
           <select
-            value={c.true_target_position ?? 0}
-            onChange={(e) => updateTarget('true_target_position', parseInt(e.target.value, 10))}
+            value={c.on_true_position ?? 0}
+            onChange={(e) => updateTarget('on_true_position', parseInt(e.target.value, 10))}
             disabled={readOnly}
             className={inputClass}
             style={inputStyle}
@@ -146,8 +146,8 @@ export function ConditionalBranchForm({ config, onChange, readOnly, totalSteps, 
             ✗ If false → go to step
           </p>
           <select
-            value={c.false_target_position ?? 0}
-            onChange={(e) => updateTarget('false_target_position', parseInt(e.target.value, 10))}
+            value={c.on_false_position ?? 0}
+            onChange={(e) => updateTarget('on_false_position', parseInt(e.target.value, 10))}
             disabled={readOnly}
             className={inputClass}
             style={inputStyle}

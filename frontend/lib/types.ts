@@ -50,8 +50,8 @@ export interface ConditionalBranchConfig {
     operator: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'not_contains';
     value: string | number | boolean;
   };
-  true_target_position: number;
-  false_target_position: number;
+  on_true_position: number;
+  on_false_position: number;
 }
 
 export interface ApprovalGateConfig {

@@ -83,7 +83,7 @@ export default async function handler(req:Request,res:Response){
 
         const runInsert = await client.query(`
             INSERT INTO workflow_runs (workflow_id,org_id,triggered_by_user,status)
-            VALUES ($1, $2, $3,'in_progress)
+            VALUES ($1, $2, $3,'in_progress')
             RETURNING id
         `,[workflowId,orgId,userId]);
 
@@ -91,7 +91,7 @@ export default async function handler(req:Request,res:Response){
 
         await client.query(`
             INSERT INTO step_runs(workflow_run_id,step_id,status)
-            VALUES ($1,$2,'pending)
+            VALUES ($1,$2,'pending')
         `,[runId,firstStepId]);
 
         await client.query('COMMIT');

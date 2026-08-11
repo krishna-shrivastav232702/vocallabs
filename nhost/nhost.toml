@@ -1,7 +1,7 @@
 [global]
 [[global.environment]]
 name = 'DATABASE_URL'
-value = '{{secrets.DATABASE_URL}}'
+value = 'postgres://postgres:{{secrets.HASURA_GRAPHQL_ADMIN_SECRET}}@pubrhjxgfmmxtndbxjoy.db.ap-south-1.nhost.run:5432/pubrhjxgfmmxtndbxjoy'
 
 [[global.environment]]
 name = 'DEFAULT_LLM_API_KEY'

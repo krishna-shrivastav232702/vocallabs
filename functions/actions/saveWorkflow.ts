@@ -1,16 +1,7 @@
 import type { Request, Response } from 'express';
 import { Pool } from 'pg';
 
-function getDbUrl() {
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-  if (process.env.NHOST_ADMIN_SECRET && process.env.NHOST_SUBDOMAIN && process.env.NHOST_REGION) {
-    const region = process.env.NHOST_REGION.replace(/-(\d)$/, '$1'); // e.g. ap-south-1 -> ap-south1
-    return `postgres://postgres:${process.env.NHOST_ADMIN_SECRET}@${process.env.NHOST_SUBDOMAIN}.db.${region}.nhost.run:5432/${process.env.NHOST_SUBDOMAIN}`;
-  }
-  return undefined;
-}
-
-const pool = new Pool({ connectionString: getDbUrl() });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const EDITOR_RESTRICTED_STEP_TYPES = ['db_write', 'notify'];
 
 export default async function handler(req: Request, res: Response) {
@@ -127,9 +118,7 @@ export default async function handler(req: Request, res: Response) {
       await client.query('ROLLBACK');
     }
     console.error(err);
-    return res.status(400).json({
-      message: `Internal error saving workflow | code=${err?.code} | ${err?.message ?? String(err)}`,
-    });
+    return res.status(400).json({ message: 'Internal error saving workflow' });
   } finally {
     if (client) {
       client.release();

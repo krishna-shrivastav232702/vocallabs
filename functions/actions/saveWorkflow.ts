@@ -14,31 +14,23 @@ const pool = new Pool({ connectionString: getDbUrl() });
 const EDITOR_RESTRICTED_STEP_TYPES = ['db_write', 'notify'];
 
 export default async function handler(req: Request, res: Response) {
-  // Hasura sends: { input: { ...variables }, session_variables: { ... } }
-  // Defensively support both shapes in case the runtime unwraps it differently.
-  const input = req.body?.input ?? req.body;
-  const sessionVars = req.body?.session_variables ?? {};
+  if (!req.body) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
 
-  if (!input || typeof input !== 'object') {
-    return res.status(400).json({
-      message: 'Invalid payload',
-      receivedBody: JSON.stringify(req.body).slice(0, 500),
-    });
+  const { input, session_variables } = req.body;
+
+  if (!input) {
+    return res.status(400).json({ message: 'Invalid payload' });
   }
 
   const { workflow_id, org_id, name, steps = [], triggers = [] } = input;
-  const userId = sessionVars?.['x-hasura-user-id'] ?? req.body?.session_variables?.['x-hasura-user-id'];
+  const userId =
+    session_variables?.['x-hasura-user-id'] ||
+    (req.headers['x-hasura-user-id'] as string | undefined);
 
   if (!userId) {
-    return res.status(401).json({
-      message: 'Unauthorized',
-      debug: {
-        bodyKeys: Object.keys(req.body || {}),
-        sessionVars: sessionVars,
-        hasInput: !!req.body?.input,
-        inputKeys: input ? Object.keys(input) : [],
-      },
-    });
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 
   if (triggers.some((t: any) => t.trigger_type === 'webhook')) {
@@ -135,11 +127,7 @@ export default async function handler(req: Request, res: Response) {
       await client.query('ROLLBACK');
     }
     console.error(err);
-    return res.status(400).json({
-      message: 'Internal error saving workflow',
-      detail: err?.message ?? String(err),
-      code: err?.code,
-    });
+    return res.status(400).json({ message: 'Internal error saving workflow' });
   } finally {
     if (client) {
       client.release();

@@ -1,4 +1,15 @@
 [global]
+[[global.environment]]
+name = 'DATABASE_URL'
+value = '{{secrets.DATABASE_URL}}'
+
+[[global.environment]]
+name = 'DEFAULT_LLM_API_KEY'
+value = '{{secrets.DEFAULT_LLM_API_KEY}}'
+
+[[global.environment]]
+name = 'SWEEPER_SECRET'
+value = '{{secrets.SWEEPER_SECRET}}'
 
 [hasura]
 version = 'v2.48.10-ce'

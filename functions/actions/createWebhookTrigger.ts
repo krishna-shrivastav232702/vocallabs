@@ -3,9 +3,16 @@ import crypto from 'crypto'
 import { Request,Response } from 'express';
 
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-})
+function getDbUrl() {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  if (process.env.NHOST_ADMIN_SECRET && process.env.NHOST_SUBDOMAIN && process.env.NHOST_REGION) {
+    const region = process.env.NHOST_REGION.replace(/-(\d)$/, '$1');
+    return `postgres://postgres:${process.env.NHOST_ADMIN_SECRET}@${process.env.NHOST_SUBDOMAIN}.db.${region}.nhost.run:5432/${process.env.NHOST_SUBDOMAIN}`;
+  }
+  return undefined;
+}
+
+const pool = new Pool({ connectionString: getDbUrl() });
 
 export default async function handler(req:Request,res:Response){
     const {workflow_id} = req.body.input;

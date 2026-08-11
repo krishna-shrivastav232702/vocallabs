@@ -14,12 +14,20 @@ const pool = new Pool({ connectionString: getDbUrl() });
 const EDITOR_RESTRICTED_STEP_TYPES = ['db_write', 'notify'];
 
 export default async function handler(req: Request, res: Response) {
-  if (!req.body || !req.body.input) {
-    return res.status(400).json({ message: 'Invalid payload' });
+  // Hasura sends: { input: { ...variables }, session_variables: { ... } }
+  // Defensively support both shapes in case the runtime unwraps it differently.
+  const input = req.body?.input ?? req.body;
+  const sessionVars = req.body?.session_variables ?? {};
+
+  if (!input || typeof input !== 'object') {
+    return res.status(400).json({
+      message: 'Invalid payload',
+      receivedBody: JSON.stringify(req.body).slice(0, 500),
+    });
   }
 
-  const { workflow_id, org_id, name, steps = [], triggers = [] } = req.body.input;
-  const userId = req.body.session_variables?.['x-hasura-user-id'];
+  const { workflow_id, org_id, name, steps = [], triggers = [] } = input;
+  const userId = sessionVars?.['x-hasura-user-id'] ?? req.body?.session_variables?.['x-hasura-user-id'];
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized' });

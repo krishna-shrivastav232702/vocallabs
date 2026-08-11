@@ -20,8 +20,9 @@ export default async function handler(req: Request, res: Response) {
     return res.status(400).json({ message: 'Use createWebhookTrigger for webhook triggers' });
   }
 
-  const client = await pool.connect();
+  let client;
   try {
+    client = await pool.connect();
     await client.query('BEGIN');
 
     let targetOrgId = org_id;
@@ -105,10 +106,14 @@ export default async function handler(req: Request, res: Response) {
     await client.query('COMMIT');
     return res.json({ workflow_id: targetWorkflowId });
   } catch (err) {
-    await client.query('ROLLBACK');
+    if (client) {
+      await client.query('ROLLBACK');
+    }
     console.error(err);
     return res.status(500).json({ message: 'Internal error saving workflow' });
   } finally {
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 }

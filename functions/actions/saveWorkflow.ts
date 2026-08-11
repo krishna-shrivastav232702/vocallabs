@@ -117,8 +117,8 @@ export default async function handler(req: Request, res: Response) {
     if (client) {
       await client.query('ROLLBACK');
     }
-    console.error(err);
-    return res.status(400).json({ message: 'Internal error saving workflow' });
+    console.error(`ERR|${err?.code}|${err?.message ?? String(err)}`);
+    return res.status(400).json({ message: `ERR|${err?.code}|${err?.message ?? String(err)}` });
   } finally {
     if (client) {
       client.release();

@@ -50,7 +50,11 @@ version = '0.49.1'
 mode = 'disabled'
 
 [auth.redirections]
-clientUrl = 'http://localhost:3000'
+clientUrl = 'https://vocallabs-three.vercel.app'
+allowedUrls = [
+  'http://localhost:3000',
+  'https://vocallabs-three.vercel.app'
+]
 
 [auth.signUp]
 enabled = true

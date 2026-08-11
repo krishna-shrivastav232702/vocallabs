@@ -110,7 +110,7 @@ export default async function handler(req: Request, res: Response) {
       await client.query('ROLLBACK');
     }
     console.error(err);
-    return res.status(500).json({ message: 'Internal error saving workflow' });
+    return res.status(400).json({ message: 'Internal error saving workflow' });
   } finally {
     if (client) {
       client.release();

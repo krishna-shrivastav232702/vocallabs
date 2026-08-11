@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from 'urql';
 import { useSignOut, useUserData } from '@nhost/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { GET_MY_ORGS } from '@/lib/graphql/queries';
 import { ROLE_BADGE_CONFIG } from '@/lib/utils';
 import type { OrgRole, Org } from '@/lib/types';
 import { useOrgContext } from '@/components/providers/org-context';
@@ -16,22 +14,11 @@ export function Header() {
   const user = useUserData();
   const { signOut } = useSignOut();
   const router = useRouter();
-  const { orgId, setOrgId, role } = useOrgContext();
+  const { orgId, setOrgId, role, orgs } = useOrgContext();
   const [orgMenuOpen, setOrgMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const [{ data }] = useQuery({ query: GET_MY_ORGS });
-  const rawOrgs = data?.organizations ?? [];
-  const orgMembers: Array<{ role: OrgRole; org: Org }> = rawOrgs.map((org: any) => ({
-    role: org.org_members?.[0]?.role ?? 'viewer',
-    org: {
-      id: org.id,
-      name: org.name,
-      quota_limit: org.quota_limit,
-      quota_usage: org.quota_usage,
-    },
-  }));
-  const currentMember = orgMembers.find((m) => m.org.id === orgId) ?? orgMembers[0];
+  const currentMember = orgs.find((m) => m.org.id === orgId) ?? orgs[0];
   const currentOrg = currentMember?.org;
   const currentRole = (currentMember?.role ?? role) as OrgRole;
   const roleConfig = ROLE_BADGE_CONFIG[currentRole] ?? ROLE_BADGE_CONFIG.viewer;
@@ -82,7 +69,7 @@ export function Header() {
             <ChevronDown className="w-3.5 h-3.5" style={{ color: 'var(--color-text-tertiary)' }} />
           </button>
 
-          {orgMenuOpen && orgMembers.length > 0 && (
+          {orgMenuOpen && orgs.length > 0 && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setOrgMenuOpen(false)} />
               <div
@@ -94,7 +81,7 @@ export function Header() {
                 }}
                 role="menu"
               >
-                {orgMembers.map((m) => (
+                {orgs.map((m) => (
                   <button
                     key={m.org.id}
                     role="menuitem"

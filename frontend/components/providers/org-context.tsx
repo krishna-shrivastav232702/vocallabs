@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useQuery } from 'urql';
-import { useAuthenticationStatus } from '@nhost/react';
+import { useAuthenticationStatus, useUserData } from '@nhost/react';
 import { GET_MY_ORGS } from '@/lib/graphql/queries';
 import type { OrgRole, Org } from '@/lib/types';
 
@@ -28,11 +28,13 @@ const OrgContext = createContext<OrgContextValue>({
 
 export function OrgContextProvider({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthenticationStatus();
+  const user = useUserData();
   const [orgId, setOrgId] = useState('');
 
   const [{ data, fetching, error }] = useQuery({
     query: GET_MY_ORGS,
-    pause: !isAuthenticated,
+    variables: { userId: user?.id },
+    pause: !isAuthenticated || !user?.id,
     // Always refetch from network — don't rely on stale cache after login
     requestPolicy: 'network-only',
   });

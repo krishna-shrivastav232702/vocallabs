@@ -5,13 +5,13 @@ import { gql } from 'urql';
 // Fetch all orgs the current user belongs to (drives the OrgSwitcher).
 // Hasura row permissions automatically filter to orgs where the user is a member.
 export const GET_MY_ORGS = gql`
-  query GetMyOrgs {
+  query GetMyOrgs($userId: uuid!) {
     organizations {
       id
       name
       quota_limit
       quota_usage
-      org_members {
+      org_members(where: { user_id: { _eq: $userId } }) {
         role
       }
     }

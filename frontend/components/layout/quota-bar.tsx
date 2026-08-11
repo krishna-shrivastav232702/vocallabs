@@ -1,16 +1,13 @@
 'use client';
 
-import { useQuery } from 'urql';
-import { GET_MY_ORGS } from '@/lib/graphql/queries';
+
 import { useOrgContext } from '@/components/providers/org-context';
 import type { Org } from '@/lib/types';
 
 export function QuotaBar() {
-  const { orgId } = useOrgContext();
-  const [{ data }] = useQuery({ query: GET_MY_ORGS });
+  const { orgId, orgs } = useOrgContext();
 
-  const orgMembers: Array<{ org: Org }> = data?.org_members ?? [];
-  const currentOrg = orgMembers.find((m) => m.org.id === orgId)?.org ?? orgMembers[0]?.org;
+  const currentOrg = orgs.find((m) => m.org.id === orgId)?.org ?? orgs[0]?.org;
 
   const used = currentOrg?.quota_usage ?? 0;
   const limit = currentOrg?.quota_limit ?? 100;

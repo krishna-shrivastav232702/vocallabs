@@ -42,6 +42,23 @@ export function RunView({ workflowRunId, workflowName }: RunViewProps) {
 
   const stepRuns: StepRun[] = data?.step_runs ?? [];
 
+  useEffect(() => {
+    if (error) {
+      console.error('Subscription error:', error);
+    }
+  }, [error]);
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto px-5 py-6">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-500">
+          <p className="font-semibold text-sm mb-1">Subscription Error</p>
+          <p className="text-xs font-mono break-all">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
   if (fetching && stepRuns.length === 0) return <RunViewSkeleton />;
 
   return (

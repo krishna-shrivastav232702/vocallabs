@@ -9,16 +9,14 @@ import { createClient as createWSClient } from 'graphql-ws';
 
 let _client: Client | null = null;
 
+import { nhost } from './nhost';
+
 function getGraphqlUrl(): string {
-  const subdomain = process.env.NEXT_PUBLIC_NHOST_SUBDOMAIN!;
-  const region = process.env.NEXT_PUBLIC_NHOST_REGION!;
-  return `https://${subdomain}.hasura.${region}.nhost.run/v1/graphql`;
+  return nhost.graphql.httpUrl;
 }
 
 function getWsUrl(): string {
-  const subdomain = process.env.NEXT_PUBLIC_NHOST_SUBDOMAIN!;
-  const region = process.env.NEXT_PUBLIC_NHOST_REGION!;
-  return `wss://${subdomain}.hasura.${region}.nhost.run/v1/graphql`;
+  return nhost.graphql.wsUrl;
 }
 
 export function createUrqlClient(accessToken?: string): Client {

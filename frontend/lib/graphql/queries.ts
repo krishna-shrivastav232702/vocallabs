@@ -39,10 +39,21 @@ export const GET_WORKFLOWS = gql`
         enabled
         config
       }
-      latest_run {
+      runs: workflow_runs(order_by: { started_at: desc }, limit: 1) {
+        id
         status
         started_at
         completed_at
+        step_runs(
+          order_by: { step: { position: desc } }
+          limit: 1
+        ) {
+          status
+          step {
+            position
+            step_type
+          }
+        }
       }
     }
   }

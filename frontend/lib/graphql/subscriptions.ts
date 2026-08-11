@@ -15,8 +15,8 @@ export const STEP_RUNS_SUBSCRIPTION = gql`
       input
       output
       error
-      started_at
-      completed_at
+      created_at
+      updated_at
       step {
         id
         step_type

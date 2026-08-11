@@ -28,8 +28,8 @@ export function StepRunNode({ stepRun, role, statusChanged }: StepRunNodeProps) 
   const isApprovalPause = stepRun.status === 'paused_awaiting_approval';
 
   function formatDuration(): string | null {
-    if (!stepRun.started_at || !stepRun.completed_at) return null;
-    const ms = new Date(stepRun.completed_at).getTime() - new Date(stepRun.started_at).getTime();
+    if (!stepRun.created_at || !stepRun.updated_at) return null;
+    const ms = new Date(stepRun.updated_at).getTime() - new Date(stepRun.created_at).getTime();
     if (ms < 1000) return `${ms}ms`;
     return `${(ms / 1000).toFixed(1)}s`;
   }

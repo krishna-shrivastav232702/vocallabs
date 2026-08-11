@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { formatRelativeTime, STEP_TYPE_CONFIG } from '@/lib/utils';
 import { StatusBadge } from '@/components/ui/status-badge';
 import type { Workflow, TriggerType, Step, StepType } from '@/lib/types';
@@ -18,9 +19,11 @@ const TRIGGER_LABELS: Record<TriggerType, string> = {
 };
 
 export function WorkflowCard({ workflow }: WorkflowCardProps) {
+  const router = useRouter();
   const stepCount = workflow.steps?.length ?? 0;
   const triggerTypes = [...new Set(workflow.workflow_triggers.map((t) => t.trigger_type))];
-  const latestStatus = workflow.latest_run?.status;
+  const latestStatus = workflow.runs?.[0]?.status;
+  const activeStepRun = workflow.runs?.[0]?.step_runs?.[0];
 
   return (
     <Link
@@ -49,7 +52,26 @@ export function WorkflowCard({ workflow }: WorkflowCardProps) {
             {workflow.name}
           </h2>
           {latestStatus && (
-            <StatusBadge status={latestStatus} size="sm" />
+            <div className="flex items-center gap-2">
+              <StatusBadge status={latestStatus} size="sm" />
+              {activeStepRun && latestStatus === 'in_progress' && (
+                <span className="text-xs font-medium" style={{ color: 'var(--color-accent)' }}>
+                  (Step {activeStepRun.step.position + 1}: {STEP_TYPE_CONFIG[activeStepRun.step.step_type].label})
+                </span>
+              )}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push(`/workflows/${workflow.id}/runs/${workflow.runs?.[0]?.id}`);
+                }}
+                className="ml-2 text-xs font-medium hover:underline flex items-center gap-1"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                View details
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
           )}
         </div>
 

@@ -76,7 +76,7 @@ export type StepRunStatus =
 
 // ─── Workflow run statuses ────────────────────────────────────────────────────
 export type WorkflowRunStatus =
-  | 'running'
+  | 'in_progress'
   | 'paused'
   | 'completed'
   | 'failed';
@@ -112,9 +112,17 @@ export interface WorkflowTrigger {
 }
 
 export interface LatestRun {
+  id: string;
   status: WorkflowRunStatus;
   started_at: string;
   completed_at: string | null;
+  step_runs?: Array<{
+    status: StepRunStatus;
+    step: {
+      position: number;
+      step_type: StepType;
+    };
+  }>;
 }
 
 export interface Workflow {
@@ -125,8 +133,8 @@ export interface Workflow {
   updated_at: string;
   steps: Step[] | { id: string }[];
   workflow_triggers: WorkflowTrigger[];
-  // View relationship as documented in backend.md
-  latest_run?: LatestRun | null;
+  // Using workflow_runs relationship directly instead of view to support step_runs
+  runs?: LatestRun[];
 }
 
 export interface StepRun {
@@ -137,8 +145,8 @@ export interface StepRun {
   input: Record<string, unknown> | null;
   output: Record<string, unknown> | null;
   error: string | null;
-  started_at: string | null;
-  completed_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
   step: Step;
 }
 

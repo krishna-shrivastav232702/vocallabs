@@ -128,10 +128,7 @@ export default async function handler(req: Request, res: Response) {
     }
     console.error(err);
     return res.status(400).json({
-      message: 'Internal error saving workflow',
-      detail: String(err?.message ?? err),
-      code: err?.code,
-      where: err?.where,
+      message: `Internal error saving workflow | code=${err?.code} | ${err?.message ?? String(err)}`,
     });
   } finally {
     if (client) {

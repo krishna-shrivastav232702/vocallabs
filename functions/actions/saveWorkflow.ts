@@ -5,8 +5,16 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const EDITOR_RESTRICTED_STEP_TYPES = ['db_write', 'notify'];
 
 export default async function handler(req: Request, res: Response) {
-  const { workflow_id, org_id, name, steps, triggers } = req.body.input;
-  const userId = req.headers['x-hasura-user-id'];
+  if (!req.body || !req.body.input) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+
+  const { workflow_id, org_id, name, steps = [], triggers = [] } = req.body.input;
+  const userId = req.body.session_variables?.['x-hasura-user-id'];
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
 
   if (triggers.some((t: any) => t.trigger_type === 'webhook')) {
     return res.status(400).json({ message: 'Use createWebhookTrigger for webhook triggers' });

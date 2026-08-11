@@ -1,7 +1,12 @@
 import type { Request, Response } from 'express';
 import { Pool } from 'pg';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Nhost auto-injects NHOST_ADMIN_SECRET, NHOST_SUBDOMAIN, NHOST_REGION into every function.
+// The postgres user password equals the Hasura admin secret in Nhost.
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL ||
+    `postgres://postgres:${process.env.NHOST_ADMIN_SECRET}@${process.env.NHOST_SUBDOMAIN}.db.${process.env.NHOST_REGION}.nhost.run:5432/postgres`,
+});
 const EDITOR_RESTRICTED_STEP_TYPES = ['db_write', 'notify'];
 
 export default async function handler(req: Request, res: Response) {

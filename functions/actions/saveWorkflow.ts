@@ -30,7 +30,15 @@ export default async function handler(req: Request, res: Response) {
   const userId = sessionVars?.['x-hasura-user-id'] ?? req.body?.session_variables?.['x-hasura-user-id'];
 
   if (!userId) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({
+      message: 'Unauthorized',
+      debug: {
+        bodyKeys: Object.keys(req.body || {}),
+        sessionVars: sessionVars,
+        hasInput: !!req.body?.input,
+        inputKeys: input ? Object.keys(input) : [],
+      },
+    });
   }
 
   if (triggers.some((t: any) => t.trigger_type === 'webhook')) {

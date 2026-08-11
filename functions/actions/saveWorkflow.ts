@@ -83,12 +83,12 @@ export default async function handler(req: Request, res: Response) {
       if (s.id) {
         await client.query(
           `UPDATE steps SET step_type = $1, position = $2, config = $3 WHERE id = $4 AND workflow_id = $5`,
-          [s.step_type, s.position, s.config, s.id, targetWorkflowId]
+          [s.step_type, s.position, JSON.stringify(s.config), s.id, targetWorkflowId]
         );
       } else {
         await client.query(
           `INSERT INTO steps (workflow_id, step_type, position, config) VALUES ($1, $2, $3, $4)`,
-          [targetWorkflowId, s.step_type, s.position, s.config]
+          [targetWorkflowId, s.step_type, s.position, JSON.stringify(s.config)]
         );
       }
     }
@@ -102,12 +102,12 @@ export default async function handler(req: Request, res: Response) {
       if (t.id) {
         await client.query(
           `UPDATE workflow_triggers SET config = $1, enabled = $2 WHERE id = $3 AND workflow_id = $4`,
-          [t.config, t.enabled, t.id, targetWorkflowId]
+          [JSON.stringify(t.config), t.enabled, t.id, targetWorkflowId]
         );
       } else {
         await client.query(
           `INSERT INTO workflow_triggers (workflow_id, trigger_type, config, enabled) VALUES ($1, $2, $3, $4)`,
-          [targetWorkflowId, t.trigger_type, t.config, t.enabled]
+          [targetWorkflowId, t.trigger_type, JSON.stringify(t.config), t.enabled]
         );
       }
     }

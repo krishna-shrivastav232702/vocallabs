@@ -114,12 +114,16 @@ export default async function handler(req: Request, res: Response) {
 
     await client.query('COMMIT');
     return res.json({ workflow_id: targetWorkflowId });
-  } catch (err) {
+  } catch (err: any) {
     if (client) {
       await client.query('ROLLBACK');
     }
     console.error(err);
-    return res.status(400).json({ message: 'Internal error saving workflow' });
+    return res.status(400).json({
+      message: 'Internal error saving workflow',
+      detail: err?.message ?? String(err),
+      code: err?.code,
+    });
   } finally {
     if (client) {
       client.release();

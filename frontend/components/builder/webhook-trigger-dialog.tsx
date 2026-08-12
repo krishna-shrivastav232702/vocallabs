@@ -6,10 +6,11 @@ import { AlertTriangle, Copy, Check, X } from 'lucide-react';
 
 interface WebhookTriggerDialogProps {
   token: string;
+  triggerId: string;
   onDismiss: () => void;
 }
 
-export function WebhookTriggerDialog({ token, onDismiss }: WebhookTriggerDialogProps) {
+export function WebhookTriggerDialog({ token, triggerId, onDismiss }: WebhookTriggerDialogProps) {
   const [copied, setCopied] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -68,9 +69,26 @@ export function WebhookTriggerDialog({ token, onDismiss }: WebhookTriggerDialogP
             className="text-sm font-semibold mb-2"
             style={{ color: 'var(--color-text-primary)' }}
           >
-            Webhook Bearer Token
+            Webhook Details
           </p>
 
+          <p className="text-xs font-semibold mt-2 mb-1" style={{ color: 'var(--color-text-secondary)' }}>Trigger ID</p>
+          <div
+            className="flex items-center gap-2 p-3 rounded-xl mb-3"
+            style={{
+              background: 'var(--color-surface-2)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <code
+              className="flex-1 text-xs font-mono break-all select-all"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              {triggerId}
+            </code>
+          </div>
+
+          <p className="text-xs font-semibold mb-1" style={{ color: 'var(--color-text-secondary)' }}>Secret Token</p>
           {/* Token display */}
           <div
             className="flex items-center gap-2 p-3 rounded-xl"

@@ -67,7 +67,7 @@ export const CREATE_WEBHOOK_TRIGGER = gql`
 export const REVOKE_WEBHOOK_TRIGGER = gql`
   mutation RevokeWebhookTrigger($trigger_id: uuid!) {
     revokeWebhookTrigger(trigger_id: $trigger_id) {
-      ok
+      success
     }
   }
 `;

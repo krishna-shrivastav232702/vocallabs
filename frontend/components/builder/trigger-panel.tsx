@@ -327,6 +327,7 @@ export function TriggerPanel({
       {webhookDialogOpen && newToken && (
         <WebhookTriggerDialog
           token={newToken.token}
+          triggerId={newToken.triggerId}
           onDismiss={() => {
             setWebhookDialogOpen(false);
             setNewToken(null);

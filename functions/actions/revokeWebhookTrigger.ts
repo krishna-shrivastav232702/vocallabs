@@ -5,7 +5,7 @@ const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
 export default async function handler(req:Request,res:Response){
     const {trigger_id} = req.body.input;
-    const userId = req.headers['x-hasura-user-id'];
+    const userId = req.headers['x-hasura-user-id'] || req.body.session_variables?.['x-hasura-user-id'];
     const client = await pool.connect();
     try{
         const authCheck = await client.query(

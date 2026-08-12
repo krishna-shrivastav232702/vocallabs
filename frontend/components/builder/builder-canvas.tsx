@@ -75,12 +75,14 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
       let migratedConfig = s.config;
       if (s.step_type === 'conditional_branch' && migratedConfig) {
         const c = migratedConfig as Record<string, unknown>;
-        if (c.true_target_position !== undefined || c.false_target_position !== undefined || c.on_true_position === undefined) {
+        if (c.true_target_position !== undefined || c.false_target_position !== undefined) {
           migratedConfig = { 
             ...c, 
-            on_true_position: c.true_target_position ?? c.on_true_position ?? 0, 
-            on_false_position: c.false_target_position ?? c.on_false_position ?? 0 
+            on_true_position: c.on_true_position ?? c.true_target_position ?? 0, 
+            on_false_position: c.on_false_position ?? c.false_target_position ?? 0 
           };
+          delete (migratedConfig as any).true_target_position;
+          delete (migratedConfig as any).false_target_position;
         }
       }
       return {
@@ -110,12 +112,14 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
         let migratedConfig = s.config;
         if (s.step_type === 'conditional_branch' && migratedConfig) {
           const c = migratedConfig as Record<string, unknown>;
-          if (c.true_target_position !== undefined || c.false_target_position !== undefined || c.on_true_position === undefined) {
+          if (c.true_target_position !== undefined || c.false_target_position !== undefined) {
             migratedConfig = { 
               ...c, 
-              on_true_position: c.true_target_position ?? c.on_true_position ?? 0, 
-              on_false_position: c.false_target_position ?? c.on_false_position ?? 0 
+              on_true_position: c.on_true_position ?? c.true_target_position ?? 0, 
+              on_false_position: c.on_false_position ?? c.false_target_position ?? 0 
             };
+            delete (migratedConfig as any).true_target_position;
+            delete (migratedConfig as any).false_target_position;
           }
         }
         return {

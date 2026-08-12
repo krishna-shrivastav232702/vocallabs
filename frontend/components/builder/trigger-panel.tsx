@@ -85,6 +85,10 @@ export function TriggerPanel({
     const { trigger_id, token } = result.data.createWebhookTrigger;
     setNewToken({ token, triggerId: trigger_id });
     setWebhookDialogOpen(true);
+    onTriggersChange([
+      ...triggers,
+      { id: trigger_id, trigger_type: 'webhook', config: {}, enabled: true }
+    ]);
   }
 
   async function handleRevokeWebhook(triggerId: string) {
@@ -93,6 +97,9 @@ export function TriggerPanel({
       toast.error(`Failed to revoke webhook: ${result.error.message}`);
     } else {
       toast.success('Webhook trigger revoked');
+      onTriggersChange(
+        triggers.map((t) => (t.id === triggerId ? { ...t, enabled: false } : t))
+      );
     }
   }
 

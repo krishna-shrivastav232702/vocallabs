@@ -1,7 +1,7 @@
 # Synflow - Enterprise-Grade Workflow Engine
 
 ## 🎥 Video Walkthrough
-*[Insert your loom/youtube video link here demonstrating the live end-to-end testing]*
+https://github.com/user-attachments/assets/031cb99d-9ddd-41a1-8611-d0cd516cb4d6
 
 ## 🚀 Features Overview
 Synflow is a distributed, multi-tenant workflow engine built for resilience and security. It supports executing complex logical flows including external API calls, AI inference, conditional branching, and human-in-the-loop approvals.

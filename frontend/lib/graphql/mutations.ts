@@ -48,7 +48,7 @@ export const TRIGGER_WORKFLOW_RUN = gql`
 export const APPROVE_STEP = gql`
   mutation ApproveStep($step_run_id: uuid!) {
     approveStep(step_run_id: $step_run_id) {
-      ok
+      success
     }
   }
 `;

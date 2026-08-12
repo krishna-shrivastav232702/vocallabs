@@ -11,6 +11,10 @@ value = '{{secrets.DEFAULT_LLM_API_KEY}}'
 name = 'SWEEPER_SECRET'
 value = '{{secrets.SWEEPER_SECRET}}'
 
+[[global.environment]]
+name = 'SECRET_ENCRYPTION_KEY'
+value = '{{secrets.SECRET_ENCRYPTION_KEY}}'
+
 [hasura]
 version = 'v2.48.10-ce'
 adminSecret = '{{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}'
@@ -51,10 +55,7 @@ mode = 'disabled'
 
 [auth.redirections]
 clientUrl = 'https://vocallabs-three.vercel.app'
-allowedUrls = [
-  'http://localhost:3000',
-  'https://vocallabs-three.vercel.app'
-]
+allowedUrls = ['http://localhost:3000', 'https://vocallabs-three.vercel.app']
 
 [auth.signUp]
 enabled = true

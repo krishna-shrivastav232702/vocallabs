@@ -67,6 +67,7 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
 
   const existingWorkflow = wfData?.workflows_by_pk;
 
+
   // Local draft state — optimistic, mutated before any network round-trip
   const [name, setName] = useState<string>(() => existingWorkflow?.name ?? 'Untitled workflow');
   const [steps, setSteps] = useState<DraftStep[]>(() =>
@@ -237,6 +238,20 @@ export function BuilderCanvas({ workflowId }: BuilderCanvasProps) {
   }
 
   if (workflowId && wfFetching) return <BuilderSkeleton />;
+
+  // Render unauthorized/not found state if editing but no workflow returned
+  if (workflowId && !wfFetching && !existingWorkflow) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-4">
+        <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+          Workflow Not Found
+        </h2>
+        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          This workflow doesn't exist, or you don't have permission to view it in this organization.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">

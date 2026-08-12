@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { SignUpForm } from '@/components/auth/sign-up-form';
 
@@ -30,7 +31,9 @@ export default function SignUpPage() {
           <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
             Get started with Synflow for free
           </p>
-          <SignUpForm />
+          <Suspense fallback={<div className="h-40" />}>
+            <SignUpForm />
+          </Suspense>
         </div>
 
         <p className="text-center text-sm mt-4" style={{ color: 'var(--color-text-tertiary)' }}>

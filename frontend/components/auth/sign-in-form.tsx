@@ -16,9 +16,10 @@ export function SignInForm() {
   // Auto-redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/dashboard');
+      const next = searchParams.get('next') || '/dashboard';
+      router.replace(next);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

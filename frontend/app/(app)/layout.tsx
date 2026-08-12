@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuthenticationStatus } from '@nhost/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { QuotaBar } from '@/components/layout/quota-bar';
@@ -11,11 +11,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthenticationStatus();
   const router = useRouter();
 
+  const pathname = usePathname();
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace('/sign-in');
+      router.replace(`/sign-in?next=${encodeURIComponent(pathname)}`);
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, pathname]);
 
   if (isLoading) {
     // Full-screen skeleton while auth resolves — prevents layout shift

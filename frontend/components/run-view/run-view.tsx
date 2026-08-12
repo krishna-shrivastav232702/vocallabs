@@ -1,9 +1,10 @@
 'use client';
 
-import { useSubscription } from 'urql';
+import { useSubscription, useQuery } from 'urql';
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { STEP_RUNS_SUBSCRIPTION } from '@/lib/graphql/subscriptions';
+import { GET_WORKFLOW_RUN } from '@/lib/graphql/queries';
 import { StepRunNode } from './step-run-node';
 import { ConnectionIndicator } from './connection-indicator';
 import { RunViewSkeleton } from '@/components/skeletons/run-view-skeleton';
@@ -24,6 +25,11 @@ export function RunView({ workflowRunId, workflowName }: RunViewProps) {
   const [{ data, fetching, error, stale }] = useSubscription({
     query: STEP_RUNS_SUBSCRIPTION,
     variables: { workflow_run_id: workflowRunId },
+  });
+
+  const [{ data: runData, fetching: runFetching }] = useQuery({
+    query: GET_WORKFLOW_RUN,
+    variables: { id: workflowRunId },
   });
 
   // Detect WebSocket reconnect: stale or error → show reconnecting indicator
@@ -60,6 +66,19 @@ export function RunView({ workflowRunId, workflowName }: RunViewProps) {
   }
 
   if (fetching && stepRuns.length === 0) return <RunViewSkeleton />;
+
+  if (!runFetching && !runData?.workflow_runs_by_pk) {
+    return (
+      <div className="max-w-2xl mx-auto px-5 py-16 text-center">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+          Run Not Found
+        </h2>
+        <p className="text-sm mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+          This workflow run doesn't exist, or you don't have permission to view it.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-5 py-6">

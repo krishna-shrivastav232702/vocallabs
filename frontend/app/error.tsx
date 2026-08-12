@@ -15,9 +15,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en">
-      <body style={{ background: '#0d0d10', color: '#f0f0f5', fontFamily: 'system-ui, sans-serif', margin: 0 }}>
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'var(--color-bg)' }}>
           <div style={{ textAlign: 'center', maxWidth: '360px' }}>
             <div style={{
               width: '48px', height: '48px', borderRadius: '12px',
@@ -50,8 +48,7 @@ export default function GlobalError({
               Try again
             </button>
           </div>
-        </div>
-      </body>
-    </html>
+      </div>
+  
   );
 }
